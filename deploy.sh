@@ -21,6 +21,7 @@ then
   -e POSTGRES_USER="${POSTGRES_USER}" \
   -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
   -e POSTGRES_HOST="${POSTGRES_HOST}" \
+  -e STATIC_URL="http://fake.com/" \
   -it "gcr.io/${PROJECT_ID}/my-image" python3 manage.py "$@"
 elif [[ $1 == "deploy" ]]
 then
