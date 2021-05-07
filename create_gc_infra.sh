@@ -26,7 +26,7 @@ then
   ps ax | grep proxy
 #  psql -h "/cloudsql/marker-311206:us-central1:test"
 #  psql -h "/cloudsql/$CONNECTION_NAME"
-  PGPASSWORD=testpasswd psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension postgis;'
+  PGPASSWORD=testpasswd psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension if not exists postgis;'
   read
   kill "${PROXY_PID}"
 else
