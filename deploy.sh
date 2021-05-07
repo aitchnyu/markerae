@@ -14,7 +14,7 @@ then
   docker run --mount type=bind,source=/cloudsql,target=/cloudsql -e POSTGRES_DB="${POSTGRES_DB}" -e POSTGRES_USER="${POSTGRES_USER}" -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" -e POSTGRES_HOST="${POSTGRES_HOST}" -it markeraeprod venv/bin/python3 manage.py "$@"
 elif [[ $1 == "deploy" ]]
 then
-  docker run --mount type=bind,source="$(pwd)",target=/hostpwd -it markeraeprod venv/bin/python3 manage.py collectstatic --noinput && cp -R /code/static /hostpwd/static
+   docker run --mount type=bind,source="$(pwd)",target=/hostpwd -it markeraeprod bash -c "venv/bin/python3 manage.py collectstatic --noinput && cp -R static /hostpwd/static && chown $USER:$USER -R /hostpwd/static"
   # todo build container, upload static files, push to cloud run with env variables
 #  echo "env_variables:" > backend/appenv.yaml
 #  echo "  POSTGRES_DB: ${POSTGRES_DB}" >> backend/appenv.yaml
