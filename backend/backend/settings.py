@@ -74,13 +74,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {'default': {
+DATABASES = {'default':
+    {
     'ENGINE': 'django.contrib.gis.db.backends.postgis',
     'NAME': os.environ['POSTGRES_DB'],
     'USER': os.environ['POSTGRES_USER'],
     'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-    'HOST': os.environ['POSTGRES_HOST']
-}}
+    'HOST': os.environ['POSTGRES_HOST']}
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
