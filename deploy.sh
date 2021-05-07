@@ -47,12 +47,22 @@ then
         --update-env-vars STATIC_URL="https://storage.googleapis.com/${STATIC_BUCKET}/"
    }
    gcloud_deploy fake_host
+   URL="null"
+   HAD_TO_WAIT_FOR_URL=0
    while true
    do
-     gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq '.status.address.url'
+     URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq '.status.address.url')
+     if [[ $URL == "null" ]]
+       then break
+     fi
+     HAD_TO_WAIT_FOR_URL=1
+     echo "Waiting for url"
      sleep 5
    done
-
+   echo real url is "${URL}"
+   if [[ $HAD_TO_WAIT_FOR_URL == 1 ]]
+     then gcloud_deploy "${URL}"
+   fi
    # todo push to cloud run with env variables
 else
   echo unknown command
