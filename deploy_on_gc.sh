@@ -36,6 +36,7 @@ then
   }
   # todo this script should wait the needful time and return the pid
 #  PROXY_PID=$(ensure_gc_sql_proxy)
+  ensure_gc_sql_proxy
   echo proxy pid $PROXY_PID
   # From https://stackoverflow.com/a/18389184 check if POSTGRES_DB exists and then create POSTGRES_DB if needed.
   # From link above, since there is a \gexec, we must pipe this command to psql instead of psql -c "select..."
