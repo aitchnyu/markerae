@@ -1,4 +1,7 @@
 venv/
+# output of collectstatic
+static/
+backend/appenv.yaml
 #backend/app/static/app/webpack-dist/
 #frontend/node_modules/
 
