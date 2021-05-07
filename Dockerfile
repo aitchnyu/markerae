@@ -36,13 +36,13 @@ CMD ./node_modules/.bin/vue-cli-service build --target wc-async --inline-vue --n
 CMD ls ./webpack-dist
 
 # todo copy static files from prev js stage
-FROM base as prod
-COPY backend/requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt && \
-    pip3 install gunicorn==20.1.0
-# This is to allow manage.py commands
-ENV POSTGRES_DB=fake POSTGRES_USER=fake POSTGRES_PASSWORD=fake POSTGRES_HOST=fake
-COPY backend/ ./
-CMD python3 manage.py collectstatic --noinput
-COPY --from=jsprod webpack-dist static/app/webpack-dist
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
+#FROM base as prod
+#COPY backend/requirements.txt requirements.txt
+#RUN pip3 install -r requirements.txt && \
+#    pip3 install gunicorn==20.1.0
+## This is to allow manage.py commands
+#ENV POSTGRES_DB=fake POSTGRES_USER=fake POSTGRES_PASSWORD=fake POSTGRES_HOST=fake
+#COPY backend/ ./
+#CMD python3 manage.py collectstatic --noinput
+#COPY --from=jsprod webpack-dist static/app/webpack-dist
+#CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
