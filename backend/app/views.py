@@ -7,8 +7,12 @@ from . import forms, models
 
 def index(request):
     query = models.Marker.objects.order_by('-id')
-    lower_left_lat, lower_left_lng, upper_right_lat, upper_right_lng = query.aggregate(Extent('location'))['location__extent']
-    extent_points = [[lower_left_lat, lower_left_lng], [upper_right_lat, upper_right_lng]]
+    maybe_extent = query.aggregate(Extent('location'))['location__extent']
+    if maybe_extent:
+        lower_left_lat, lower_left_lng, upper_right_lat, upper_right_lng = maybe_extent
+        extent_points = [[lower_left_lat, lower_left_lng], [upper_right_lat, upper_right_lng]]
+    else:
+        extent_points = [[8, 68], [37, 97]] # Approximate extent of India
     markers = [{'id': marker.id,
                  'location': {'lat': marker.location.x, 'lng': marker.location.y}, # Yes, this is inverted
                  'name': marker.name}
