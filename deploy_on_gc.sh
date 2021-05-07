@@ -31,8 +31,8 @@ then
     sudo chown $USER:$USER /cloudsql
     nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
 #    PROXY_PID=$!
-    echo $!
     sleep 5 # Wait or psql may be unable to connect immediately
+    echo $!
   }
   # todo this script should wait the needful time and return the pid
   echo running fn
