@@ -57,7 +57,7 @@ then
         --update-env-vars POSTGRES_USER="${POSTGRES_USER}" \
         --update-env-vars POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
         --update-env-vars POSTGRES_HOST="/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" \
-        --update-env-vars ALLOWED_HOSTS="^;^$1" \
+        --update-env-vars "^;^ALLOWED_HOSTS=$1" \
         --update-env-vars STATIC_URL="/static-$(openssl rand -hex 12)/"
    }
    hostnames() {
