@@ -1,18 +1,19 @@
 #!/bin/bash
 
-if [[ -z "$PROJECT_ID" ]]
-then
-  echo It appears you are not running this in GCloud Shell.
-  exit 1
+GMETADATA_ADDR=`dig +short metadata.google.internal`
+if [[ "${GMETADATA_ADDR}" != "" ]]; then
+    echo "It appears you are not running this in Cloud shell"
 fi
+# todo make this a loop
 if [[ -z "$POSTGRES_INSTANCE" ]]
 then
-  echo It appears you didnt set necessary env variables
+  echo "It appears you didnt set necessary env variables"
   exit 1
 fi
 
 if [[ $1 == "build" ]]
 then
+  docker pull "gcr.io/${PROJECT_ID}/my-image"
   docker build --target prod --tag "gcr.io/${PROJECT_ID}/my-image" .
   docker push "gcr.io/${PROJECT_ID}/my-image"
 elif [[ $1 == "manage" ]]
@@ -23,7 +24,8 @@ then
   nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
   PROXY_PID=$!
   sleep 5 # Wait or psql may be unable to connect immediately
-  PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -d postgres -U postgres -c 'create extension if not exists postgis;'
+  PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -U postgres -c "create database if not exists ${POSTGRES_DB};"
+  PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -d "${POSTGRES_DB}" -U postgres -c 'create extension if not exists postgis;'
   docker run --mount type=bind,source=/cloudsql,target=/cloudsql \
     -e POSTGRES_DB="${POSTGRES_DB}" \
     -e POSTGRES_USER="${POSTGRES_USER}" \
