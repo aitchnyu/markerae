@@ -30,15 +30,15 @@ then
     sudo mkdir -p /cloudsql
     sudo chown $USER:$USER /cloudsql
     nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
-    PID=$!
+    PROXY_PID=$!
     sleep 5 # Wait or psql may be unable to connect immediately
     echo got a pid of $PID
-    echo $PID
+#    echo $PID
   }
   # todo this script should wait the needful time and return the pid
   echo running fn
-  PROXY_PID=$(ensure_gc_sql_proxy)
-#  ensure_gc_sql_proxy
+#  PROXY_PID=$(ensure_gc_sql_proxy)
+  ensure_gc_sql_proxy
   echo proxy pid $PROXY_PID
   # From https://stackoverflow.com/a/18389184 check if POSTGRES_DB exists and then create POSTGRES_DB if needed.
   # From link above, since there is a \gexec, we must pipe this command to psql instead of psql -c "select..."
