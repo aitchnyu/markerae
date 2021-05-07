@@ -11,11 +11,14 @@ then
   exit 1
 fi
 
-docker build --target prod --tag "gcr.io/${PROJECT_ID}/my-image" .
-
-if [[ $1 == "manage" ]]
+if [[ $1 == "build" ]]
+then
+  docker build --target prod --tag "gcr.io/${PROJECT_ID}/my-image" .
+  docker push "gcr.io/${PROJECT_ID}/my-image"
+elif [[ $1 == "manage" ]]
 then
   shift
+  # todo this script should wait the needful time and return the pid
   ./ensure_gc_sql_proxy.sh
   nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
   PROXY_PID=$!
@@ -30,7 +33,7 @@ then
   kill "${PROXY_PID}"
 elif [[ $1 == "deploy" ]]
 then
-   docker push "gcr.io/${PROJECT_ID}/my-image"
+   docker pull "gcr.io/${PROJECT_ID}/my-image"
    gcloud_deploy () {
       gcloud run deploy "${SERVICE_NAME}" \
         --image "gcr.io/${PROJECT_ID}/my-image:latest" \
