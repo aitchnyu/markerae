@@ -6,6 +6,7 @@ then
   gsutil defacl set public-read "gs://${2}"
 elif [[ $1 == "db" ]]
 then
+  ./ensure_gc_sql_proxy.sh
   gcloud sql instances create $2 \
     `# Not HA` \
     --availability-type zonal \
@@ -17,7 +18,6 @@ then
     --storage-type SSD \
     --tier db-f1-micro
 #  sudo mkdir -p /cloudsql && sudo chown $USER:$USER /cloudsql
-  ./ensure_gc_sql_proxy
   CONNECTION_NAME=$(gcloud sql instances describe $2 --format json | jq -r '.connectionName')
   nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
   sleep 5 # Wait or psql may be unable to connect immediately
