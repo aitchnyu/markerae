@@ -25,6 +25,7 @@ then
    sudo rm -r static
    docker push "gcr.io/${PROJECT_ID}/my-image"
   # todo push to cloud run with env variables
+  gcloud run deploy dd --image "gcr.io/${PROJECT_ID}/my-image:latest" --platform managed --region "${REGION}" --max-instances=5
 else
   echo unknown command
 fi
