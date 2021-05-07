@@ -1,8 +1,9 @@
 #!/bin/bash
 
 GMETADATA_ADDR=`dig +short metadata.google.internal`
-if [[ "${GMETADATA_ADDR}" != "" ]]; then
+if [[ "${GMETADATA_ADDR}" == "" ]]; then
     echo "It appears you are not running this in Cloud shell"
+    exit 1
 fi
 # todo make this a loop
 if [[ -z "$POSTGRES_INSTANCE" ]]
