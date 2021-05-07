@@ -19,7 +19,10 @@ RUN pip3 install -r requirements.txt && \
     pip3 install gunicorn==20.1.0
 ENV POSTGRES_DB=fake POSTGRES_USER=fake POSTGRES_PASSWORD=fake POSTGRES_HOST=fake
 COPY backend/ ./
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
+# CMD fails for some strange Cloud Run behavior https://stackoverflow.com/questions/61989516/running-gcloud-run-deploy-from-inside-cloud-build-results-in-error
+# Hence a new script and ENTRYPOINT
+#CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
+ENTRYPOINT "./startup.sh"
 
 # todo later
 FROM ubuntu:20.04 as js
