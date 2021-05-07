@@ -59,20 +59,26 @@ then
         --update-env-vars ALLOWED_HOSTS="$1" \
         --update-env-vars STATIC_URL="/static-$(openssl rand -hex 12)/"
    }
-   auto_assigned_hostname() {
+   hostnames() {
      # We get a {"status": {"address": {"url": "https://example.appspot.com"...}...}...}
-     gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq -r '.status.address.url' | cut -c9-
+     CLOUD_RUN_HOSTNAME=`gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq -r '.status.address.url' | cut -c9-`
+     if [[ -z "$SITE" ]]
+     then
+       echo "$CLOUD_RUN_HOSTNAME,$SITE"
+     else
+       echo $CLOUD_RUN_HOSTNAME
+     fi
    }
    gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}"
    # Is gcloud unable to find the service and returned a nonzero exit code? That means we have to do a first deploy with a fake hostname
    if [[ $? != 0 ]]
    then
      echo Creating service
-     gcloud_deploy fake_host
-     gcloud_deploy "$(auto_assigned_hostname)"
+     gcloud_deploy "fakehostname"
+     gcloud_deploy "`hostnames`"
    else
      echo Updating service
-     gcloud_deploy "$(auto_assigned_hostname)"
+     gcloud_deploy "`hostnames`"
   fi
 else
   echo Run Django manage.py command
