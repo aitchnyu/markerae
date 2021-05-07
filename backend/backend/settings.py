@@ -81,6 +81,7 @@ default_db = {
     'PASSWORD': os.environ['POSTGRES_PASSWORD'],
     'HOST': os.environ['POSTGRES_HOST']
 }
+# todo remove
 if 'POSTGRES_PORT' in os.environ:
     default_db['PORT'] = int(os.environ.get('POSTGRES_PORT', 5432))
 
