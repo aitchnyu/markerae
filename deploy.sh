@@ -1,5 +1,5 @@
 #!/bin/bash
-docker build --target prod -tag markeraeprod --tag "gcr.io/${PROJECT_ID}/my-image" .
+docker build --target prod --tag markeraeprod --tag "gcr.io/${PROJECT_ID}/my-image" .
 
 if [[ -z "$POSTGRES_HOST" ]]
 then
