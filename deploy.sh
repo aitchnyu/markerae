@@ -53,7 +53,7 @@ then
    do
      URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq '.status.address.url')
      echo "url ${URL}"
-     if [[ $URL == "null" ]]
+     if [[ $URL != "null" ]]
        then break
      fi
      HAD_TO_WAIT_FOR_URL=1
