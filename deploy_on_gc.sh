@@ -35,6 +35,7 @@ then
     sleep 5 # Wait or psql may be unable to connect immediately
   }
   # todo this script should wait the needful time and return the pid
+  echo running fn
   PROXY_PID=$(ensure_gc_sql_proxy)
 #  ensure_gc_sql_proxy
   echo proxy pid $PROXY_PID
