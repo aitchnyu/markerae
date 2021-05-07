@@ -52,20 +52,22 @@ then
     echo first deploy
     # Are you unable to find the service? That means its a first deploy
     gcloud_deploy fake_host
-    while true
-    do
-      URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq '.status.address.url')
-      echo "url ${URL}"
-      if [[ $URL != "null" ]]
-       then break
-      fi
-      echo "Waiting for url"
-      sleep 5
-    done
+    URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq -r '.status.address.url')
+    # todo below lines in case Gcloud has no domain names
+#    while true
+#    do
+#      URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq -r '.status.address.url')
+#      echo "url ${URL}"
+#      if [[ $URL != "null" ]]
+#       then break
+#      fi
+#      echo "Waiting for url"
+#      sleep 5
+#    done
     gcloud_deploy "${URL}"
   else
       echo subsqeuent deploy
-      URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq '.status.address.url')
+      URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq -r '.status.address.url')
       gcloud_deploy "${URL}"
   fi
 else
