@@ -17,11 +17,9 @@ if [[ $1 == "manage" ]]
 then
   shift
   ./ensure_gc_sql_proxy.sh
-#  CONNECTION_NAME=$(gcloud sql instances describe "$POSTGRES_INSTANCE" --format json | jq -r '.connectionName')
   nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
   PROXY_PID=$!
   sleep 5 # Wait or psql may be unable to connect immediately
-  # todo rename connection_name
   PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -d postgres -U postgres -c 'create extension if not exists postgis;'
   docker run --mount type=bind,source=/cloudsql,target=/cloudsql \
     -e POSTGRES_DB="${POSTGRES_DB}" \
@@ -33,7 +31,6 @@ then
 elif [[ $1 == "deploy" ]]
 then
    docker push "gcr.io/${PROJECT_ID}/my-image"
-#   CONNECTION_NAME=$(gcloud sql instances describe "$POSTGRES_INSTANCE" --format json | jq -r '.connectionName')
    gcloud_deploy () {
       gcloud run deploy "${SERVICE_NAME}" \
         --image "gcr.io/${PROJECT_ID}/my-image:latest" \
