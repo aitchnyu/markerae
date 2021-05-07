@@ -22,8 +22,8 @@ ENV POSTGRES_DB=fake POSTGRES_USER=fake POSTGRES_PASSWORD=fake POSTGRES_HOST=fak
 COPY backend/ ./
 # CMD fails for some strange Cloud Run behavior https://stackoverflow.com/questions/61989516/running-gcloud-run-deploy-from-inside-cloud-build-results-in-error
 # Hence a new script and ENTRYPOINT
-#CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
-ENTRYPOINT "./startup.sh"
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
+#ENTRYPOINT "./startup.sh"
 
 # todo later
 FROM ubuntu:20.04 as js
