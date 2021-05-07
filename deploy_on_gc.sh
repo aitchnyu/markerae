@@ -25,8 +25,9 @@ then
   nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
   PROXY_PID=$!
   sleep 5 # Wait or psql may be unable to connect immediately
-  PGPASSWORD="$POSTGRES_PASSWORD" echo "SELECT 'CREATE DATABASE ${POSTGRES_DB}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${POSTGRES_DB}');" | psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -U postgres
-  PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -d "${POSTGRES_DB}" -U postgres -c 'create extension if not exists postgis;'
+  PGPASSWORD="$POSTGRES_PASSWORD"
+  echo "SELECT 'CREATE DATABASE ${POSTGRES_DB}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${POSTGRES_DB}');" | psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -U postgres
+  psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -d "${POSTGRES_DB}" -U postgres -c 'create extension if not exists postgis;'
   docker run --mount type=bind,source=/cloudsql,target=/cloudsql \
     -e POSTGRES_DB="${POSTGRES_DB}" \
     -e POSTGRES_USER="${POSTGRES_USER}" \
