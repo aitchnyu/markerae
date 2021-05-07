@@ -17,32 +17,23 @@ if [[ $1 == "manage" ]]
 then
   shift
   ./ensure_gc_sql_proxy.sh
-  CONNECTION_NAME=$(gcloud sql instances describe "$POSTGRES_INSTANCE" --format json | jq -r '.connectionName')
-  nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
+#  CONNECTION_NAME=$(gcloud sql instances describe "$POSTGRES_INSTANCE" --format json | jq -r '.connectionName')
+  nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
   PROXY_PID=$!
   sleep 5 # Wait or psql may be unable to connect immediately
   # todo rename connection_name
-  PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension if not exists postgis;'
+  PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -d postgres -U postgres -c 'create extension if not exists postgis;'
   docker run --mount type=bind,source=/cloudsql,target=/cloudsql \
     -e POSTGRES_DB="${POSTGRES_DB}" \
     -e POSTGRES_USER="${POSTGRES_USER}" \
     -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
-    -e POSTGRES_HOST="/cloudsql/$CONNECTION_NAME" \
-    -e STATIC_URL="http://fake.com/" \
+    -e POSTGRES_HOST="/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" \
     -it "gcr.io/${PROJECT_ID}/my-image" python3 manage.py "$@"
   kill "${PROXY_PID}"
 elif [[ $1 == "deploy" ]]
 then
-#   docker run --mount type=bind,source="$(pwd)",target=/hostpwd \
-#      -it "gcr.io/${PROJECT_ID}/my-image" \
-#      bash -c "python3 manage.py collectstatic --noinput && cp -R static /hostpwd/static"
-#   gsutil -m rm gs://${STATIC_BUCKET}/**
-#   gsutil -m cp -Z -r static/** "gs://${STATIC_BUCKET}/"
-#   sudo rm -r static
-  #todo have a push operation
-
    docker push "gcr.io/${PROJECT_ID}/my-image"
-   CONNECTION_NAME=$(gcloud sql instances describe "$POSTGRES_INSTANCE" --format json | jq -r '.connectionName')
+#   CONNECTION_NAME=$(gcloud sql instances describe "$POSTGRES_INSTANCE" --format json | jq -r '.connectionName')
    gcloud_deploy () {
       gcloud run deploy "${SERVICE_NAME}" \
         --image "gcr.io/${PROJECT_ID}/my-image:latest" \
@@ -55,12 +46,12 @@ then
         --concurrency 10 \
         --ingress all \
         --allow-unauthenticated \
-        --set-cloudsql-instances $CONNECTION_NAME\
+        --set-cloudsql-instances $POSTGRES_INSTANCE\
         --update-env-vars DEBUG="false" \
         --update-env-vars POSTGRES_DB="${POSTGRES_DB}" \
         --update-env-vars POSTGRES_USER="${POSTGRES_USER}" \
         --update-env-vars POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
-        --update-env-vars POSTGRES_HOST="/cloudsql/$CONNECTION_NAME" \
+        --update-env-vars POSTGRES_HOST="/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" \
         --update-env-vars ALLOWED_HOSTS="$1" \
         --update-env-vars STATIC_URL="/static-$(openssl rand -hex 12)/"
    }

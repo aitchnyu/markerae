@@ -2,9 +2,10 @@
 
 if [[ $1 == "bucket" ]]
 then
+  echo reserved for future use
   # Create bucket and make objects publically downloadable
-  gsutil mb "gs://${2}"
-  gsutil defacl set public-read "gs://${2}"
+  #  gsutil mb "gs://${2}"
+  #  gsutil defacl set public-read "gs://${2}"
 elif [[ $1 == "db" ]]
 then
   # Create Postgres db and enable postgis extension
