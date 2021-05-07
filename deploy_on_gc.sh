@@ -56,7 +56,7 @@ then
         --ingress all \
         --allow-unauthenticated \
         --set-cloudsql-instances $CONNECTION_NAME\
-        --update-env-vars DEBUG="false" \
+        --update-env-vars DEBUG="true" \
         --update-env-vars POSTGRES_DB="${POSTGRES_DB}" \
         --update-env-vars POSTGRES_USER="${POSTGRES_USER}" \
         --update-env-vars POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
