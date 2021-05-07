@@ -20,7 +20,7 @@ then
   echo "  POSTGRES_HOST: ${POSTGRES_HOST}" >> backend/appenv.yaml
   /code/venv/bin/python3 /code/backend/manage.py collectstatic --noinput
   docker run --mount type=bind,source="$(pwd)",target=/code --mount type=bind,source=/cloudsql,target=/cloudsql -e POSTGRES_DB="${POSTGRES_DB}" -e POSTGRES_USER="${POSTGRES_USER}" -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" -e POSTGRES_HOST="${POSTGRES_HOST}" -it markerae /code/venv/bin/python3 /code/backend/manage.py migrate
-  gcloud app deploy
+  gcloud app deploy backend/app.yaml
 else
   echo unknown command
 fi
