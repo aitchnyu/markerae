@@ -6,6 +6,8 @@ backend/appenv.yaml
 vueapp/node_modules
 #backend/app/static/app/webpack-dist/
 #frontend/node_modules/
+# Docker compose generates this
+pgdata/
 
 .DS_Store
 # TODO redundant log killers
