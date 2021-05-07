@@ -19,15 +19,9 @@ then
   sudo mkdir -p /cloudsql && sudo chown $USER:$USER /cloudsql
   CONNECTION_NAME=$(gcloud sql instances describe test --format json | jq -r '.connectionName')
   nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
-  sleep 3
+  sleep 3 # Wait or psql may be unable to connect immediately
   PROXY_PID=$!
-  echo $PROXY_PID
-  echo $CONNECTION_NAME
-  ps ax | grep proxy
-#  psql -h "/cloudsql/marker-311206:us-central1:test"
-#  psql -h "/cloudsql/$CONNECTION_NAME"
   PGPASSWORD=testpasswd psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension if not exists postgis;'
-  read
   kill "${PROXY_PID}"
 else
   echo Command to create GCS bucket and Cloud sql db.
