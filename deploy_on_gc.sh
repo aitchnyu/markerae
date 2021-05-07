@@ -21,7 +21,7 @@ then
   nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
   PROXY_PID=$!
   sleep 5 # Wait or psql may be unable to connect immediately
-  PGPASSWORD=$4 psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension if not exists postgis;'
+  PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension if not exists postgis;'
   docker run --mount type=bind,source=/cloudsql,target=/cloudsql \
   -e POSTGRES_DB="${POSTGRES_DB}" \
   -e POSTGRES_USER="${POSTGRES_USER}" \

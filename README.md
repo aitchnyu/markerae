@@ -6,6 +6,7 @@ git clone https://github.com/aitchnyu/markerae.git
 cd markerae
 ./create_gc_infra.sh db [region] [root password]
 ./create_gc_infra.sh bucket [static bucket]
+./deploy_on_gc.sh manage showmigrations
 ```
 
 Install Cloud sql proxy
