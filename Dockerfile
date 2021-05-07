@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 as base
+FROM ubuntu:18.04 as base
 ENV PYTHONUNBUFFERED 1
 RUN mkdir /code
 WORKDIR /code
