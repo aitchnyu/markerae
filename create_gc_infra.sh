@@ -23,6 +23,7 @@ then
   echo $PROXY_PID
   echo $CONNECTION_NAME
   ps ax | grep proxy
+  psql -h "/cloudsql/marker-311206:us-central1:test"
   psql -h "/cloudsql/$CONNECTION_NAME"
   PGPASSWORD=testpasswd psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension postgis;'
   read
