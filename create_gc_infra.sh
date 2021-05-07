@@ -9,7 +9,8 @@ then
     `# Not HA` \
     --availability-type zonal \
     --database-version POSTGRES_13 \
-    --root-password $3 \
+    --region $3 \
+    --root-password $4 \
     --storage-auto-increase \
     --storage-size 10 \
     --storage-type SSD \
@@ -17,5 +18,5 @@ then
 else
   echo Command to create GCS bucket and Cloud sql db.
   echo ./create_gc_infra.sh bucket [your bucket name]
-  echo ./create_gc_infra.sh db [instance name] [root password]
+  echo ./create_gc_infra.sh db [instance name] [region] [root password]
 fi
