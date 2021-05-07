@@ -15,7 +15,7 @@ EXPOSE 8000
 
 FROM base as prod
 #RUN mkdir /venv
-COPY requirements.txt requirements.txt
+COPY backend/requirements.txt requirements.txt
 RUN python3 -m venv venv && \
     venv/bin/pip3 install -r requirements.txt && \
     venv/bin/pip3 install gunicorn==20.1.0
