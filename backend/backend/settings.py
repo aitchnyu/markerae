@@ -20,13 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# todo configure
 SECRET_KEY = 'django-insecure-rkb*00zfvh$1vf=!+76o#*v0osqvg$3rtz#pmy0!55*3z=i--l'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True # todo configure
 
-ALLOWED_HOSTS = ['0.0.0.0']
-
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS','').split(',')
 
 # Application definition
 
@@ -74,19 +74,13 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-default_db = {
+DATABASES = {'default': {
     'ENGINE': 'django.contrib.gis.db.backends.postgis',
     'NAME': os.environ['POSTGRES_DB'],
     'USER': os.environ['POSTGRES_USER'],
     'PASSWORD': os.environ['POSTGRES_PASSWORD'],
     'HOST': os.environ['POSTGRES_HOST']
-}
-# todo remove
-if 'POSTGRES_PORT' in os.environ:
-    default_db['PORT'] = int(os.environ.get('POSTGRES_PORT', 5432))
-
-DATABASES = {'default': default_db}
-
+}}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
