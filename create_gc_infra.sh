@@ -21,7 +21,9 @@ then
   nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
   PROXY_PID=$!
   echo $PROXY_PID
+  echo $CONNECTION_NAME
   ps ax | grep proxy
+  psql -h "/cloudsql/$CONNECTION_NAME"
   PGPASSWORD=testpasswd psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension postgis;'
   read
   kill "${PROXY_PID}"
