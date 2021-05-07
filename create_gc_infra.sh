@@ -6,7 +6,7 @@ then
   gsutil defacl set public-read "gs://${2}"
 elif [[ $1 == "db" ]]
 then
-  ./ensure_gc_sql_proxy.sh
+  ./ensure_gc_sql_proxy.sh # todo move this down
   gcloud sql instances create $2 \
     `# Not HA` \
     --availability-type zonal \
@@ -20,10 +20,10 @@ then
 #  sudo mkdir -p /cloudsql && sudo chown $USER:$USER /cloudsql
   CONNECTION_NAME=$(gcloud sql instances describe $2 --format json | jq -r '.connectionName')
   nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
+  PROXY_PID=$!
   sleep 5 # Wait or psql may be unable to connect immediately
-#  PROXY_PID=$!
   PGPASSWORD=$4 psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension if not exists postgis;'
-#  kill "${PROXY_PID}"
+  kill "${PROXY_PID}"
 elif [[ $1 == "test" ]] # todo delete
 then
   echo 1
