@@ -19,6 +19,7 @@ then
   sudo mkdir -p /cloudsql && sudo chown $USER:$USER /cloudsql
   CONNECTION_NAME=$(gcloud sql instances describe test --format json | jq -r '.connectionName')
   nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
+  sleep 5
   PROXY_PID=$!
   echo $PROXY_PID
   echo $CONNECTION_NAME
