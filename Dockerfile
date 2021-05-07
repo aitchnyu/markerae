@@ -21,7 +21,7 @@ RUN python3 -m venv venv && \
     venv/bin/pip3 install gunicorn==20.1.0
 ENV POSTGRES_DB=fake POSTGRES_USER=fake POSTGRES_PASSWORD=fake POSTGRES_HOST=fake
 COPY backend/ ./
-RUN /code/venv/bin/python3 manage.py collectstatic --noinput
+#RUN /code/venv/bin/python3 manage.py collectstatic --noinput
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
 
 # todo later
