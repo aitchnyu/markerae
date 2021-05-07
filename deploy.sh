@@ -21,7 +21,7 @@ elif [[ $1 == "deploy" ]]
 then
    docker run --mount type=bind,source="$(pwd)",target=/hostpwd -it "gcr.io/${PROJECT_ID}/my-image" bash -c "python3 manage.py collectstatic --noinput && cp -R static /hostpwd/static"
    gsutil -m rm gs://${STATIC_BUCKET}/**
-   gsutil -m cp -J -r static/ "gs://${STATIC_BUCKET}"
+   gsutil -m cp -J -r static/ "gs://${STATIC_BUCKET}/"
 #   gsutil rsync -J -R static/ "gs://${STATIC_BUCKET}"
    sudo rm -r static
    docker push "gcr.io/${PROJECT_ID}/my-image"
