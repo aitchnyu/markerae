@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [[ $1 == "bucket" ]]
 then
   gsutil mb "gs://${2}"
@@ -14,13 +16,14 @@ then
     --storage-size 10 \
     --storage-type SSD \
     --tier db-f1-micro
-  sudo mkdir -p /cloudsql && sudo chown $USER:$USER /cloudsql
+#  sudo mkdir -p /cloudsql && sudo chown $USER:$USER /cloudsql
+  ./ensure_gc_sql_proxy
   CONNECTION_NAME=$(gcloud sql instances describe $2 --format json | jq -r '.connectionName')
   nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
   sleep 5 # Wait or psql may be unable to connect immediately
-  PROXY_PID=$!
+#  PROXY_PID=$!
   PGPASSWORD=$4 psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension if not exists postgis;'
-  kill "${PROXY_PID}"
+#  kill "${PROXY_PID}"
 elif [[ $1 == "test" ]] # todo delete
 then
   echo 1
