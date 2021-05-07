@@ -52,6 +52,7 @@ then
    while true
    do
      URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq '.status.address.url')
+     echo "url ${URL}"
      if [[ $URL == "null" ]]
        then break
      fi
