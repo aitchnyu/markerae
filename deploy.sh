@@ -49,7 +49,7 @@ then
    gcloud_deploy fake_host
    while true
    do
-     gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq '.status.address.urls'
+     gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq '.status.address.url'
      sleep 5
    done
 
