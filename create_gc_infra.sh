@@ -22,7 +22,7 @@ then
   PROXY_PID=$!
   echo $PROXY_PID
   ps ax | grep proxy
-  PGAPSSWORD=testpasswd psql -h $CONNECTION_NAME -d postgres -U postgres -c 'create extension postgis;'
+  PGPASSWORD=testpasswd psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension postgis;'
   kill "${PROXY_PID}"
 else
   echo Command to create GCS bucket and Cloud sql db.
