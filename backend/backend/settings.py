@@ -121,6 +121,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+# todo use this?
+# from django.contrib.staticfiles.storage import (
+#     ManifestStaticFilesStorage,
+#     StaticFilesStorage,
+# )
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 STATIC_URL = os.environ.get('STATIC_URL', '/static/') # Former for production, latter for dev
 STATIC_ROOT= os.path.join(BASE_DIR, 'static')

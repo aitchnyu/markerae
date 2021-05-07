@@ -1,3 +1,4 @@
 Django==3.2 # Web framework
 psycopg2==2.8.5 # Postgres driver
+selenium==3.141.0 # Automated testing framework
 whitenoise==5.2.0 # For caching

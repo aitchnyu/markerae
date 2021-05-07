@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div id="resting-center" style="display: none" v-if="restingCenter">{{ restingCenter }}</div>
     <div>
       <l-map :zoom.sync="zoom" ref="map" class="almost-fullscreen fullwidth">
         <l-tile-layer url='https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamVzdmluIiwiYSI6ImNqeDV5emdpeTA2MHI0OG50c2N4OTZhd28ifQ.aehvE-ZEvTy-Yd0yMTSnWw'
@@ -54,17 +55,25 @@
       BDropdown, BDropdownItem, LMap,LTileLayer, LPopup, LMarker, Portal
     },
     mounted () {
-      window.createMarker = this.createMarker
-      console.log('mounted')
-      const map = this.$refs.map.mapObject
+      window.homepageMap = this
+      console.log('mounted homepagemap')
+      const map = this.getLeaflet()
       let crosshair = new L.marker(map.getCenter(), {icon: crosshairIcon, clickable: false})
       crosshair.addTo(map)
       map.on('move', (e) => {
         crosshair.setLatLng(map.getCenter())
       })
+      const that = this
+      map.once('moveend zoomend', function () {
+        const center = that.getLeaflet().getCenter()
+        that.restingCenter = `${center.lat},${center.lng}`
+      })
       map.fitBounds(L.polyline(this.extentPoints).getBounds())
     },
     methods: {
+      getLeaflet () {
+        return this.$refs.map.mapObject
+      },
       createMarker() {
         console.log("create marker", this)
         const mapCenter = this.$refs.map.mapObject.getCenter()
@@ -81,6 +90,7 @@
       return {
         ci: CircleIcon,
         icon: icon,
+        restingCenter: null,
         zoom: 2,
         markers: CONSTANTS.markers,
         extentPoints: CONSTANTS.extent_points

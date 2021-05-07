@@ -5,6 +5,8 @@ from django.views import View
 
 from . import forms, models
 
+INDIA_EXTENT = ((8, 68), (37, 97)) # Approximate extent of India
+
 def index(request):
     query = models.Marker.objects.order_by('-id')
     maybe_extent = query.aggregate(Extent('location'))['location__extent']
@@ -12,12 +14,15 @@ def index(request):
         lower_left_lat, lower_left_lng, upper_right_lat, upper_right_lng = maybe_extent
         extent_points = [[lower_left_lat, lower_left_lng], [upper_right_lat, upper_right_lng]]
     else:
-        extent_points = [[8, 68], [37, 97]] # Approximate extent of India
+        extent_points = INDIA_EXTENT
     markers = [{'id': marker.id,
                  'location': {'lat': marker.location.x, 'lng': marker.location.y}, # Yes, this is inverted
                  'name': marker.name}
                 for marker in query]
-    return render(request, 'app/home.html', {'js_constants': {'markers': markers, 'extent_points': extent_points}})
+    return render(request,
+                  'app/home.html',
+                  {'page_title': 'All Markers',
+                   'js_constants': {'markers': markers, 'extent_points': extent_points}})
 
 
 class CreateMarker(View):

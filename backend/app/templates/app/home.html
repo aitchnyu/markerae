@@ -7,12 +7,12 @@
     {{ js_constants | js_constants_def | safe }}
   </script>
   <div id="main">
-    <webcomponents-homepage-map>
+    <webcomponents-homepage-map id="homepage-map">
       <div style="height: 700px; width: 100%; background-color: #e6e5e0">Loading</div>
     </webcomponents-homepage-map>
   </div>
 {% endblock %}
 {% block sidebar %}
-  <button class="button is-info is-block" onclick="createMarker()">Create</button>
+  <button class="button is-info is-block" onclick="homepageMap.createMarker()">Create</button>
   <div id="markers"></div>
 {% endblock %}
