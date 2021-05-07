@@ -5,7 +5,7 @@ then
   echo It appears you are not running this in GCloud Shell.
   exit 1
 fi
-if [[ -z "$POSTGRES_HOST" ]]
+if [[ -z "$POSTGRES_INSTANCE" ]]
 then
   echo It appears you didnt set necessary env variables
   exit 1
@@ -52,7 +52,7 @@ then
         --concurrency 10 \
         --ingress all \
         --allow-unauthenticated \
-        --set-cloudsql-instances "${POSTGRES_HOST}"\
+        --set-cloudsql-instances "/cloudsql/$CONNECTION_NAME"\
         --update-env-vars POSTGRES_DB="${POSTGRES_DB}" \
         --update-env-vars POSTGRES_USER="${POSTGRES_USER}" \
         --update-env-vars POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
