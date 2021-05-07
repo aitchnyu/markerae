@@ -81,7 +81,7 @@ DATABASES = {
         'USER': os.environ['POSTGRES_USER'],
         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
         'HOST': os.environ['POSTGRES_HOST'],
-        'PORT': int(os.environ.get('POSTGRES_PORT', 5432)),
+        'PORT': int(os.environ.get('POSTGRES_PORT', 5432)) if 'POSTGRES_PORT' in os.environ else None,
     }
 }
 
