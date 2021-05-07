@@ -20,7 +20,7 @@ then
 elif [[ $1 == "deploy" ]]
 then
    docker run --mount type=bind,source="$(pwd)",target=/hostpwd -it "gcr.io/${PROJECT_ID}/my-image" bash -c "python3 manage.py collectstatic --noinput && cp -R static /hostpwd/static"
-   gsutil rsync -R static/ "gs://${STATIC_BUCKET}"
+   gsutil rsync -R static/ "gs://${STATIC_BUCKET}/static"
    sudo rm -r static
    docker push "gcr.io/${PROJECT_ID}/my-image"
    # Hack: static files have root permissions
