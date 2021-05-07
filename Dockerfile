@@ -39,5 +39,5 @@ RUN pip3 install -r requirements.txt && \
 ENV POSTGRES_DB=fake POSTGRES_USER=fake POSTGRES_PASSWORD=fake POSTGRES_HOST=fake
 COPY backend/ ./
 RUN python3 manage.py collectstatic --noinput
-COPY --from=jsprod webpack-dist webpack-dist
+COPY --from=jsprod webpack-dist webpack-dist2
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
