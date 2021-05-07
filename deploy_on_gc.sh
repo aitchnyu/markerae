@@ -62,7 +62,7 @@ then
    hostnames() {
      # We get a {"status": {"address": {"url": "https://example.appspot.com"...}...}...}
      CLOUD_RUN_HOSTNAME=`gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq -r '.status.address.url' | cut -c9-`
-     if [[ -n "$SITE" ]]
+     if [[ $SITE ]]
      then
        echo "$CLOUD_RUN_HOSTNAME,$SITE"
      else
