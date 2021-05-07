@@ -20,7 +20,7 @@ then
   CONNECTION_NAME=$(gcloud sql instances describe test --format json | jq -r '.connectionName')
   nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
   PROXY_PID=$!
-  PGAPSSWORD=testpasswd psql -h 127.0.0.1 psql -d postgres -u postgres -c 'create extension postgis;'
+  PGAPSSWORD=testpasswd psql -h 127.0.0.1 psql -d postgres -U postgres -c 'create extension postgis;'
   kill "${PROXY_PID}"
 else
   echo Command to create GCS bucket and Cloud sql db.
