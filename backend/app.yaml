@@ -1,5 +1,8 @@
 runtime: python39
 
+includes:
+  - appenv.yaml
+
 handlers:
 # This configures Google App Engine to serve the files in the app's static
 # directory.
