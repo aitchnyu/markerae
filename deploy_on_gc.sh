@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# From https://stackoverflow.com/a/38795846
 GMETADATA_ADDR=`dig +short metadata.google.internal`
 if [[ "${GMETADATA_ADDR}" == "" ]]; then
     echo "It appears you are not running this in Cloud shell"
@@ -20,13 +21,26 @@ then
 elif [[ $1 == "manage" ]]
 then
   shift
+  ensure_gc_sql_proxy() {
+    if [[ ! -f ~/cloud_sql_proxy ]]; then
+      echo Downloading google cloud sql proxy
+      wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O ~/cloud_sql_proxy
+      chmod +x ~/cloud_sql_proxy
+    fi
+    sudo mkdir -p /cloudsql
+    sudo chown $USER:$USER /cloudsql
+    nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
+#    PROXY_PID=$!
+    sleep 5 # Wait or psql may be unable to connect immediately
+    echo $!
+  }
   # todo this script should wait the needful time and return the pid
-  ./ensure_gc_sql_proxy.sh
-  nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
-  PROXY_PID=$!
-  sleep 5 # Wait or psql may be unable to connect immediately
+  PROXY_PID=$(ensure_gc_sql_proxy)
+  echo proxy pid $PROXY_PID
   # From https://stackoverflow.com/a/18389184 check if POSTGRES_DB exists and then create POSTGRES_DB if needed.
+  # From link above, since there is a \gexec, we must pipe this command to psql instead of psql -c "select..."
   echo "SELECT 'CREATE DATABASE ${POSTGRES_DB}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${POSTGRES_DB}')\gexec" | PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -U postgres
+  # To above db, create postgis extension
   PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -d "${POSTGRES_DB}" -U postgres -c 'create extension if not exists postgis;'
   docker run --mount type=bind,source=/cloudsql,target=/cloudsql \
     -e POSTGRES_DB="${POSTGRES_DB}" \
@@ -39,7 +53,6 @@ elif [[ $1 == "deploy" ]]
 then
    docker pull "gcr.io/${PROJECT_ID}/my-image"
    gcloud_deploy () {
-      # The comma in the value "foo.com,bar.com" is syntax error for gcloud dict-type args, so specify ";" as delimiter for ALLOWED_HOSTS
       gcloud run deploy "${SERVICE_NAME}" \
         --image "gcr.io/${PROJECT_ID}/my-image:latest" \
         --platform managed \
@@ -57,6 +70,7 @@ then
         --update-env-vars POSTGRES_USER="${POSTGRES_USER}" \
         --update-env-vars POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
         --update-env-vars POSTGRES_HOST="/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" \
+        `: 'The comma in the value "foo.com,bar.com" is syntax error for gcloud dict-type args, so specify ";" as delimiter for ALLOWED_HOSTS as "^;^"'` \
         --update-env-vars "^;^ALLOWED_HOSTS=$1" \
         --update-env-vars STATIC_URL="/static-$(openssl rand -hex 12)/"
    }

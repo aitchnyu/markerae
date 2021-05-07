@@ -11,7 +11,6 @@ then
 elif [[ $1 == "db" ]]
 then
   # Create Postgres db and enable postgis extension
-#  ./ensure_gc_sql_proxy.sh
   gcloud sql instances create $2 \
     `# Not HA` \
     --availability-type zonal \
