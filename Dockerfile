@@ -10,12 +10,14 @@ RUN apt-get update && \
     apt-get install -y binutils libproj-dev gdal-bin
 
 FROM base as dev
+# todo rename this script?
 ADD ./append_bashrc_dev.sh /tmp/append_bashrc_dev.sh
 RUN cat /tmp/append_bashrc_dev.sh >> ~/.bashrc
 EXPOSE 8000
 
 FROM ubuntu:18.04 as jsbase
 RUN mkdir /code
+# todo move this down
 WORKDIR /code/vueapp
 RUN apt-get update && \
     apt-get install -y curl && \
