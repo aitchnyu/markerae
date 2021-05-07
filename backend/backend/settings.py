@@ -76,10 +76,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 default_db = {
     'ENGINE': 'django.contrib.gis.db.backends.postgis',
-    'NAME': os.environ['POSTGRES_DB'],
-    'USER': os.environ['POSTGRES_USER'],
-    'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-    'HOST': os.environ['POSTGRES_HOST']
+    'NAME': os.environ.get('POSTGRES_DB'),
+    'USER': os.environ.get('POSTGRES_USER'),
+    'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+    'HOST': os.environ.get('POSTGRES_HOST')
 }
 # todo remove
 if 'POSTGRES_PORT' in os.environ:
