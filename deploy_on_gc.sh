@@ -78,6 +78,7 @@ then
      gcloud_deploy "`hostnames`"
    else
      echo Updating service
+     echo "site is `hostnames`"
      gcloud_deploy "`hostnames`"
   fi
 else
