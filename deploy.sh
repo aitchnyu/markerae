@@ -16,7 +16,12 @@ docker build --target prod --tag "gcr.io/${PROJECT_ID}/my-image" .
 if [[ $1 == "manage" ]]
 then
   shift
-  docker run --mount type=bind,source=/cloudsql,target=/cloudsql -e POSTGRES_DB="${POSTGRES_DB}" -e POSTGRES_USER="${POSTGRES_USER}" -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" -e POSTGRES_HOST="${POSTGRES_HOST}" -it "gcr.io/${PROJECT_ID}/my-image" python3 manage.py "$@"
+  docker run --mount type=bind,source=/cloudsql,target=/cloudsql \
+  -e POSTGRES_DB="${POSTGRES_DB}" \
+  -e POSTGRES_USER="${POSTGRES_USER}" \
+  -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+  -e POSTGRES_HOST="${POSTGRES_HOST}" \
+  -it "gcr.io/${PROJECT_ID}/my-image" python3 manage.py "$@"
 elif [[ $1 == "deploy" ]]
 then
    docker run --mount type=bind,source="$(pwd)",target=/hostpwd \
@@ -46,29 +51,20 @@ then
         --update-env-vars ALLOWED_HOSTS="$1" \
         --update-env-vars STATIC_URL="https://storage.googleapis.com/${STATIC_BUCKET}/"
    }
-  gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}"
-  if [[ $? != 0 ]]
-  then
-    echo first deploy
-    # Are you unable to find the service? That means its a first deploy
-    gcloud_deploy fake_host
-    URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq -r '.status.address.url' | cut -c9-)
-    # todo below lines in case Gcloud has no domain names
-#    while true
-#    do
-#      URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq -r '.status.address.url')
-#      echo "url ${URL}"
-#      if [[ $URL != "null" ]]
-#       then break
-#      fi
-#      echo "Waiting for url"
-#      sleep 5
-#    done
-    gcloud_deploy "${URL}"
-  else
-      echo subsqeuent deploy
-      URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq -r '.status.address.url' | cut -c9-)
-      gcloud_deploy "${URL}"
+   auto_assigned_hostname() {
+     # We get a {"status": {"address": {"url": "https://example.appspot.com"...}...}...}
+     gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format json | jq -r '.status.address.url' | cut -c9-
+   }
+   gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}"
+   # Is gcloud unable to find the service and returned a nonzero exit code? That means we have to do a first deploy with a fake hostname
+   if [[ $? != 0 ]]
+   then
+     echo Creating service
+     gcloud_deploy fake_host
+     gcloud_deploy "$(auto_assigned_hostname)"
+   else
+     echo Updating service
+     gcloud_deploy "$(auto_assigned_hostname)"
   fi
 else
   echo unknown command
