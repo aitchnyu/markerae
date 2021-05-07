@@ -32,6 +32,7 @@ then
     nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
     PID=$!
     sleep 5 # Wait or psql may be unable to connect immediately
+    echo got a pid of $PID
     echo $PID
   }
   # todo this script should wait the needful time and return the pid
