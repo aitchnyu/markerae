@@ -15,12 +15,14 @@ EXPOSE 8000
 
 FROM base as prod
 #RUN mkdir /venv
-COPY backend/ ./
-#ADD backend/requirements.txt /venv/requirements.txt
+
+ADD backend/requirements.txt /venv/requirements.txt
 RUN python3 -m venv venv && \
     venv/bin/pip3 install -r requirements.txt && \
-    venv/bin/pip3 install gunicorn==20.1.0 && \
-    /code/venv/bin/python3 manage.py collectstatic --noinput
+    venv/bin/pip3 install gunicorn==20.1.0
+ENV POSTGRES_DB=fake POSTGRES_USER=fake POSTGRES_PASSWORD=fake POSTGRES_HOST=fake
+COPY backend/ ./
+RUN /code/venv/bin/python3 manage.py collectstatic --noinput
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
 
 # todo later
