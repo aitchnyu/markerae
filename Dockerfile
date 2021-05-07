@@ -29,9 +29,7 @@ RUN cat /tmp/append_bashrc_jsdev.sh >> ~/.bashrc
 FROM jsbase as jsprod
 ENV WEBPACK_DIST ./webpack-dist
 COPY vueapp/ ./
-CMD touch foo
-CMD npm install && echo fake && ./node_modules/.bin/vue-cli-service build --target wc-async --inline-vue --name webcomponents 'src/*.vue'
-CMD ls ./webpack-dist
+RUN npm install && ./node_modules/.bin/vue-cli-service build --target wc-async --inline-vue --name webcomponents 'src/*.vue'
 
 FROM base as prod
 COPY backend/requirements.txt requirements.txt
