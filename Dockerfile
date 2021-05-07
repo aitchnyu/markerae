@@ -20,7 +20,7 @@ COPY backend/ ./
 RUN python3 -m venv venv && \
     venv/bin/pip3 install -r requirements.txt && \
     venv/bin/pip3 install gunicorn==20.1.0 && \
-    /code/venv/bin/python3 /code/backend/manage.py collectstatic --noinput
+    /code/venv/bin/python3 manage.py collectstatic --noinput
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
 
 # todo later
