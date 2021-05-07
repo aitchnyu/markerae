@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-rkb*00zfvh$1vf=!+76o#*v0osqvg$3rtz#pmy0!55*3z=i--l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True # todo configure
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS','').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS','0.0.0.0').split(',')
 
 # Application definition
 
@@ -119,7 +119,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = os.environ.get('STATIC_URL','/static') # Former for production, latter for dev
+STATIC_URL = os.environ.get('STATIC_URL','/static/') # Former for production, latter for dev
 STATIC_ROOT= os.path.join(BASE_DIR,'static/')
 
 

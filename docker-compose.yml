@@ -26,5 +26,14 @@
         - "8000:8000"
       depends_on:
         - db
+    jsdev:
+      build:
+        context: .
+        target: jsdev
+      environment:
+        - WEBPACK_DIST=../backend/app/static/app/webpack-dist
+      tty: true
+      volumes:
+        - .:/code
   volumes:
     pgdata:

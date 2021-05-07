@@ -1,0 +1,16 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block body %}
+  <h1 class="title">Do you want to delete following markers?</h1>
+  <div class="content">
+    <ul>
+      {% for marker in markers %}
+        <li>{{ marker.name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <form method="post" action="{% url 'delete_markers' marker_id %}">
+    {% csrf_token %}
+    <button type="submit" class="button is-danger">Delete Markers</button>
+  </form>
+{% endblock %}

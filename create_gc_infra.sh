@@ -19,13 +19,6 @@ then
     --storage-size 10 \
     --storage-type SSD \
     --tier db-f1-micro
-#  sudo mkdir -p /cloudsql && sudo chown $USER:$USER /cloudsql
-#  CONNECTION_NAME=$(gcloud sql instances describe $2 --format json | jq -r '.connectionName')
-#  nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
-#  PROXY_PID=$!
-#  sleep 5 # Wait or psql may be unable to connect immediately
-#  PGPASSWORD=$4 psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension if not exists postgis;'
-#  kill "${PROXY_PID}"
 else
   echo Command to create GCS bucket and Cloud sql db.
   echo ./create_gc_infra.sh bucket [your bucket name]

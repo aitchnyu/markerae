@@ -10,22 +10,28 @@ RUN apt-get update && \
     apt-get install -y binutils libproj-dev gdal-bin
 
 FROM base as dev
-ADD ./bash_start.sh /tmp/bash_start.sh
-RUN cat /tmp/bash_start.sh >> ~/.bashrc
+ADD ./append_bashrc_dev.sh /tmp/append_bashrc_dev.sh
+RUN cat /tmp/append_bashrc_dev.sh >> ~/.bashrc
 EXPOSE 8000
 
+FROM ubuntu:20.04 as jsbase
+RUN mkdir /code
+WORKDIR /code/vueapp
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs
+
+FROM jsbase as jsdev
+ADD ./append_bashrc_jsdev.sh /tmp/append_bashrc_jsdev.sh
+RUN cat /tmp/append_bashrc_jsdev.sh >> ~/.bashrc
+
+# todo copy static files from prev js stage
 FROM base as prod
 COPY backend/requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt && \
     pip3 install gunicorn==20.1.0
+# This is to allow manage.py commands
 ENV POSTGRES_DB=fake POSTGRES_USER=fake POSTGRES_PASSWORD=fake POSTGRES_HOST=fake
 COPY backend/ ./
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
-
-# todo later
-FROM ubuntu:20.04 as js
-RUN mkdir /code
-WORKDIR /code
-RUN apt-get install -y curl && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt-get install -y nodejs

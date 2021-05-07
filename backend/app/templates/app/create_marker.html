@@ -1,0 +1,14 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block body %}
+  <script src={% static "app/webpack-dist/webcomponents.min.js" %}></script>
+  <div id="main">
+    <h1>Create a Marker</h1>
+    <form method="post" action="{% url 'create_marker' latitude longitude %}">
+      <input type="hidden" name="location" value="{{ latitude }},{{ longitude }}">
+      {% include 'app/text_input.html' with field=form.name autofocus=True only %}
+      {% csrf_token %}
+      <button type="submit" class="button">Create</button>
+    </form>
+  </div>
+{% endblock %}
