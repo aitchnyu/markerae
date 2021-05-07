@@ -39,6 +39,7 @@ elif [[ $1 == "deploy" ]]
 then
    docker pull "gcr.io/${PROJECT_ID}/my-image"
    gcloud_deploy () {
+      # The comma in the value "foo.com,bar.com" is syntax error for gcloud dict-type args, so specify ";" as delimiter for ALLOWED_HOSTS
       gcloud run deploy "${SERVICE_NAME}" \
         --image "gcr.io/${PROJECT_ID}/my-image:latest" \
         --platform managed \
@@ -56,7 +57,7 @@ then
         --update-env-vars POSTGRES_USER="${POSTGRES_USER}" \
         --update-env-vars POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
         --update-env-vars POSTGRES_HOST="/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" \
-        --update-env-vars ALLOWED_HOSTS="$1" \
+        --update-env-vars ALLOWED_HOSTS="^;^$1" \
         --update-env-vars STATIC_URL="/static-$(openssl rand -hex 12)/"
    }
    hostnames() {
