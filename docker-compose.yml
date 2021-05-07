@@ -1,4 +1,4 @@
-  version: '3'
+  version: '3.5'
   services:
     db:
       image: postgis/postgis
@@ -11,7 +11,9 @@
       ports:
         - "5432:5432"
     web:
-      build: .
+      build:
+        context: .
+        target: dev
       environment:
         - POSTGRES_DB=postgres
         - POSTGRES_USER=postgres
