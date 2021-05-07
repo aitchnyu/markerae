@@ -55,7 +55,7 @@ then
         --concurrency 10 \
         --ingress all \
         --allow-unauthenticated \
-        --set-cloudsql-instances "/cloudsql/$CONNECTION_NAME"\
+        --set-cloudsql-instances $CONNECTION_NAME\
         --update-env-vars DEBUG="false" \
         --update-env-vars POSTGRES_DB="${POSTGRES_DB}" \
         --update-env-vars POSTGRES_USER="${POSTGRES_USER}" \
