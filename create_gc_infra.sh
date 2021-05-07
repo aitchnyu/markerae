@@ -16,7 +16,7 @@ then
     --tier db-f1-micro
 elif [[ $1 == "test" ]]
 then
-  sudo mkdir -p/cloudsql && sudo chown $USER:$USER /cloudsql
+  sudo mkdir -p /cloudsql && sudo chown $USER:$USER /cloudsql
   CONNECTION_NAME=$(gcloud sql instances describe test --format json | jq -r '.connectionName')
   nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
   PROXY_PID=$!
