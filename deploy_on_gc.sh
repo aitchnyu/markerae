@@ -16,13 +16,20 @@ docker build --target prod --tag "gcr.io/${PROJECT_ID}/my-image" .
 if [[ $1 == "manage" ]]
 then
   shift
+  ./ensure_gc_sql_proxy.sh
+  CONNECTION_NAME=$(gcloud sql instances describe "$POSTGRES_INSTANCE" --format json | jq -r '.connectionName')
+  nohup ~/cloud_sql_proxy -instances="${CONNECTION_NAME}" -dir=/cloudsql &
+  PROXY_PID=$!
+  sleep 5 # Wait or psql may be unable to connect immediately
+  PGPASSWORD=$4 psql -h "/cloudsql/$CONNECTION_NAME" -d postgres -U postgres -c 'create extension if not exists postgis;'
   docker run --mount type=bind,source=/cloudsql,target=/cloudsql \
   -e POSTGRES_DB="${POSTGRES_DB}" \
   -e POSTGRES_USER="${POSTGRES_USER}" \
   -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
-  -e POSTGRES_HOST="${POSTGRES_HOST}" \
+  -e POSTGRES_HOST="/cloudsql/$CONNECTION_NAME" \
   -e STATIC_URL="http://fake.com/" \
   -it "gcr.io/${PROJECT_ID}/my-image" python3 manage.py "$@"
+  kill "${PROXY_PID}"
 elif [[ $1 == "deploy" ]]
 then
    docker run --mount type=bind,source="$(pwd)",target=/hostpwd \
@@ -32,6 +39,7 @@ then
    gsutil -m cp -Z -r static/** "gs://${STATIC_BUCKET}/"
    sudo rm -r static
    docker push "gcr.io/${PROJECT_ID}/my-image"
+   CONNECTION_NAME=$(gcloud sql instances describe "$POSTGRES_INSTANCE" --format json | jq -r '.connectionName')
    gcloud_deploy () {
       gcloud run deploy "${SERVICE_NAME}" \
         --image "gcr.io/${PROJECT_ID}/my-image:latest" \
@@ -48,7 +56,7 @@ then
         --update-env-vars POSTGRES_DB="${POSTGRES_DB}" \
         --update-env-vars POSTGRES_USER="${POSTGRES_USER}" \
         --update-env-vars POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
-        --update-env-vars POSTGRES_HOST="${POSTGRES_HOST}" \
+        --update-env-vars POSTGRES_HOST="/cloudsql/$CONNECTION_NAME" \
         --update-env-vars ALLOWED_HOSTS="$1" \
         --update-env-vars STATIC_URL="https://storage.googleapis.com/${STATIC_BUCKET}/"
    }
@@ -68,5 +76,9 @@ then
      gcloud_deploy "$(auto_assigned_hostname)"
   fi
 else
-  echo unknown command
+  echo Run Django manage.py command
+  echo ./deploy_on_gc.sh manage [rest of manage command]
+  printf "\n"
+  echo deploy to Cloud Run
+  echo ./deploy_on_gc.sh deploy
 fi

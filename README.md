@@ -1,9 +1,11 @@
 # Marker Project for Cloud Run
 
-
-https://cloud.google.com/sql/docs/mysql/connect-admin-proxy#install
 ```
+gcloud cloud-shell ssh --authorize-session
 git clone https://github.com/aitchnyu/markerae.git
+cd markerae
+./create_gc_infra.sh db [region] [root password]
+./create_gc_infra.sh bucket [static bucket]
 ```
 
 Install Cloud sql proxy
