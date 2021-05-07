@@ -1,5 +1,5 @@
 #!/bin/bash
-docker build -t markeraeprod --target prod .
+docker build -t markeraeprod --target prod . # todo tag with project name
 #docker build -t markerae .
 
 if [[ -z "$POSTGRES_HOST" ]]
@@ -15,6 +15,8 @@ then
 elif [[ $1 == "deploy" ]]
 then
    docker run --mount type=bind,source="$(pwd)",target=/hostpwd -it markeraeprod bash -c "venv/bin/python3 manage.py collectstatic --noinput && cp -R static /hostpwd/static"
+   # Hack: static files have root permissions
+#   docker run --mount type=bind,source="$(pwd)",target=/hostpwd -it markeraeprod bash -c "rm -r /hostpwd/static"
   # todo build container, upload static files, push to cloud run with env variables
 #  echo "env_variables:" > backend/appenv.yaml
 #  echo "  POSTGRES_DB: ${POSTGRES_DB}" >> backend/appenv.yaml
