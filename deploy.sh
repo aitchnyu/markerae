@@ -24,8 +24,8 @@ then
    gsutil -m cp -Z -r static/** "gs://${STATIC_BUCKET}/"
    sudo rm -r static
    docker push "gcr.io/${PROJECT_ID}/my-image"
-  # todo push to cloud run with env variables
-  gcloud run deploy dd --image "gcr.io/${PROJECT_ID}/my-image:latest" --platform managed --region "${REGION}" --max-instances=5
+   # todo push to cloud run with env variables
+   echo gcloud run deploy dd --image "gcr.io/${PROJECT_ID}/my-image:latest" --platform managed --region "${REGION}" --max-instances=5
 else
   echo unknown command
 fi
