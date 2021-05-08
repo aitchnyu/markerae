@@ -37,8 +37,8 @@ then
   }
   # todo this script should wait the needful time and return the pid
   echo running fn
-  ./ensure_gc_sql_proxy.sh
-  PROXY_PID=$(./ensure_gc_sql_proxy.sh)
+  ./ensure_gc_sql_proxy.sh start
+#  PROXY_PID=$(./ensure_gc_sql_proxy.sh)
 #  ensure_gc_sql_proxy
 
   echo proxy pid $PROXY_PID
