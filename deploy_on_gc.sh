@@ -21,27 +21,7 @@ then
 elif [[ $1 == "manage" ]]
 then
   shift
-  ensure_gc_sql_proxy() {
-    if [[ ! -f ~/cloud_sql_proxy ]]; then
-      echo Downloading google cloud sql proxy
-      wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O ~/cloud_sql_proxy
-      chmod +x ~/cloud_sql_proxy
-    fi
-    sudo mkdir -p /cloudsql
-    sudo chown $USER:$USER /cloudsql
-    nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
-    PROXY_PID=$! # This is accessed as a global. This must be killed later.
-    sleep 5 # Wait or psql may be unable to connect immediately
-#    echo got a pid of $PID
-#    echo $PID
-  }
-  # todo this script should wait the needful time and return the pid
-#  echo running fn
   ./ensure_gc_sql_proxy.sh start
-#  PROXY_PID=$(./ensure_gc_sql_proxy.sh)
-#  ensure_gc_sql_proxy
-
-  echo proxy pid $PROXY_PID
   # From https://stackoverflow.com/a/18389184 check if POSTGRES_DB exists and then create POSTGRES_DB if needed.
   # From link above, since there is a \gexec, we must pipe this command to psql instead of psql -c "select..."
   echo "SELECT 'CREATE DATABASE ${POSTGRES_DB}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${POSTGRES_DB}')\gexec" | PGPASSWORD="$POSTGRES_PASSWORD" psql -h "/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -U postgres
@@ -53,7 +33,6 @@ then
     -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
     -e POSTGRES_HOST="/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" \
     -it "gcr.io/${PROJECT_ID}/my-image" python3 manage.py "$@"
-#  kill "${PROXY_PID}"
   ./ensure_gc_sql_proxy.sh stop
 elif [[ $1 == "deploy" ]]
 then

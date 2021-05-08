@@ -9,9 +9,13 @@ then
   sudo mkdir -p /cloudsql
   sudo chown $USER:$USER /cloudsql
   nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
-  PROXY_PID=$! # This is accessed as a global. This must be killed later.
+  echo "cloud_sql_proxy started at PID $!"
   sleep 5 # Wait or psql may be unable to connect immediately
-  echo "cloud_sql_proxy started at PID $PROXY_PID"
-else
+elif [[ $1 == "stop" ]]
+then
   kill "$(ps ax | grep "instances=$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" | head -n1 | awk '{print $1;}')"
+else
+  echo "This automatically starts cloud_sql_proxy, downloading it if needed"
+  echo "ensure_cloud_sql_proxy.sh start # starts the proxy"
+  echo "ensure_cloud_sql_proxy.sh stop # kills the proxy"
 fi
