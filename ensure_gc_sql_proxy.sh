@@ -8,12 +8,10 @@ then
   fi
   sudo mkdir -p /cloudsql
   sudo chown $USER:$USER /cloudsql
-#  echo before nohup
   nohup ~/cloud_sql_proxy -instances="$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" -dir=/cloudsql &
-#  PROXY_PID=$! # This is accessed as a global. This must be killed later.
-#  echo before sleep
+  PROXY_PID=$! # This is accessed as a global. This must be killed later.
   sleep 5 # Wait or psql may be unable to connect immediately
-#echo $PROXY_PID
+  echo "cloud_sql_proxy started at PID $PROXY_PID"
 else
-  echo stop
+  kill "$(ps ax | grep "instances=$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" | head -n1 | awk '{print $1;}')"
 fi
