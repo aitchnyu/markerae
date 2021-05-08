@@ -36,7 +36,7 @@ then
 #    echo $PID
   }
   # todo this script should wait the needful time and return the pid
-  echo running fn
+#  echo running fn
   ./ensure_gc_sql_proxy.sh start
 #  PROXY_PID=$(./ensure_gc_sql_proxy.sh)
 #  ensure_gc_sql_proxy
@@ -53,7 +53,8 @@ then
     -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
     -e POSTGRES_HOST="/cloudsql/$PROJECT_ID:$REGION:$POSTGRES_INSTANCE" \
     -it "gcr.io/${PROJECT_ID}/my-image" python3 manage.py "$@"
-  kill "${PROXY_PID}"
+#  kill "${PROXY_PID}"
+  ./ensure_gc_sql_proxy.sh stop
 elif [[ $1 == "deploy" ]]
 then
    docker pull "gcr.io/${PROJECT_ID}/my-image"
