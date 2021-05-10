@@ -105,12 +105,12 @@
     width: 100%;
   }
   /*From https://stackoverflow.com/a/41869915*/
-  @media(max-width: 767px) {
+  @media(max-width: 1079px) {
     .almost-fullscreen {
       height: 95vh;
     }
   }
-  @media not all and (max-width: 767px) {
+  @media not all and (max-width: 1079px) {
     .almost-fullscreen {
       height: 99vh;
     }
