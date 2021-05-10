@@ -1,38 +1,43 @@
 <template>
   <div>
-    <div id="resting-center" style="display: none" v-if="restingCenter">{{ restingCenter }}</div>
+    <link
+      rel="stylesheet"
+      :href="stylesheet"
+    >
+    <div
+      v-if="finishedLoading"
+      id="finished-loading-indicator"
+      style="display: none"
+    />
     <div>
-      <l-map :zoom.sync="zoom" ref="map" class="almost-fullscreen fullwidth">
-        <l-tile-layer url='https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamVzdmluIiwiYSI6ImNqeDV5emdpeTA2MHI0OG50c2N4OTZhd28ifQ.aehvE-ZEvTy-Yd0yMTSnWw'
-                      attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                      :options="{tileSize: 512, zoomOffset: -1}"/>
-                <l-marker :icon="icon" v-for="marker of markers" :key="marker.id" :lat-lng="marker.location">
-                  <l-popup>
-                    {{ marker.name }}
-                  </l-popup>
-                </l-marker>
+      <l-map
+        ref="map"
+        :zoom.sync="zoom"
+        class="almost-fullscreen fullwidth"
+      >
+        <l-tile-layer
+          url="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamVzdmluIiwiYSI6ImNqeDV5emdpeTA2MHI0OG50c2N4OTZhd28ifQ.aehvE-ZEvTy-Yd0yMTSnWw"
+          attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+          :options="{tileSize: 512, zoomOffset: -1}"
+        />
+        <l-marker
+          v-for="marker of markers"
+          :key="marker.id"
+          :icon="icon"
+          :lat-lng="marker.location"
+        >
+          <l-popup>
+            {{ marker.name }}
+          </l-popup>
+        </l-marker>
       </l-map>
     </div>
-    <portal selector="#markers">
-      <div v-for="marker of markers" :key="marker.id">
-        {{ marker.name }}
-        <b-dropdown>
-          <button class="button is-small is-inverted is-danger" slot="trigger">
-            Delete &darr;
-          </button>
-          <b-dropdown-item @click="deleteMarker(marker.id)">This</b-dropdown-item>
-          <b-dropdown-item @click="deleteMarkers(marker.id)">This and older</b-dropdown-item>
-        </b-dropdown>
-      </div>
-    </portal>
   </div>
 </template>
 
 <script>
-  import { BDropdown, BDropdownItem } from 'buefy/dist/components/dropdown/index'
   import L from 'leaflet'
-  import { LMap, LTileLayer, LIcon, LMarker, LPopup, LTooltip, LPolygon } from 'vue2-leaflet'
-  import { Portal } from '@linusborg/vue-simple-portal'
+  import { LMap, LTileLayer, LIcon, LMarker, LPopup } from 'vue2-leaflet'
 
   import CircleIcon from '@/assets/circle.png'
   import PlusIcon from '@/assets/plus.png'
@@ -52,7 +57,18 @@
   export default {
     name: 'HomepageMap',
     components: {
-      BDropdown, BDropdownItem, LMap,LTileLayer, LPopup, LMarker, Portal
+      LMap,LTileLayer, LPopup, LMarker
+    },
+    props: {stylesheet: {type:String, required: true}},
+    data: function () {
+      return {
+        ci: CircleIcon,
+        icon: icon,
+        finishedLoading: false,
+        zoom: 2,
+        markers: CONSTANTS.markers,
+        extentPoints: CONSTANTS.extent_points
+      }
     },
     mounted () {
       window.homepageMap = this
@@ -63,38 +79,22 @@
       map.on('move', (e) => {
         crosshair.setLatLng(map.getCenter())
       })
-      const that = this
-      map.once('moveend zoomend', function () {
-        const center = that.getLeaflet().getCenter()
-        that.restingCenter = `${center.lat},${center.lng}`
-      })
+      map.once('moveend zoomend', () => this.finishedLoading = true)
       map.fitBounds(L.polyline(this.extentPoints).getBounds())
     },
     methods: {
       getLeaflet () {
         return this.$refs.map.mapObject
       },
+      diagnostics () {
+        const center = this.getLeaflet().getCenter()
+        return JSON.stringify({center: [center.lat, center.lng]})
+      },
       createMarker() {
         console.log("create marker", this)
         const mapCenter = this.$refs.map.mapObject.getCenter()
         window.location = `/markers/create/${mapCenter.lat}/${mapCenter.lng}`
       },
-      deleteMarker(id) {
-        window.location = `markers/delete/${id}`
-      },
-      deleteMarkers(id) {
-        window.location = `markers/delete-markers/${id}`
-      }
-    },
-    data: function () {
-      return {
-        ci: CircleIcon,
-        icon: icon,
-        restingCenter: null,
-        zoom: 2,
-        markers: CONSTANTS.markers,
-        extentPoints: CONSTANTS.extent_points
-      }
     }
   };
 </script>

@@ -119,18 +119,11 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-# todo use this?
-# from django.contrib.staticfiles.storage import (
-#     ManifestStaticFilesStorage,
-#     StaticFilesStorage,
-# )
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 STATIC_URL = os.environ.get('STATIC_URL', '/static/') # Former for production, latter for dev
 STATIC_ROOT= os.path.join(BASE_DIR, 'static')
-WHITENOISE_MAX_AGE = 30 if DEBUG else 10 * 365 * 3600 * 24 # Forever caching since static root is different for every deploy
+WHITENOISE_MAX_AGE = 0 if DEBUG else 10 * 365 * 3600 * 24 # Forever caching since static root is different for every deploy
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -8,10 +8,6 @@ if [ ! -d /code/venv ]; then
   /code/venv/bin/pip3 install -r /code/backend/requirements.txt
 fi
 
-#if [ ! -d /code/vueapp/node_modules ]; then
-#  vnpm install
-#fi
-
 # TODO make this overridable, check only if first migrate
 dmanage migrate
 

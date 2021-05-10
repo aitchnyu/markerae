@@ -79,14 +79,23 @@ class FunctionalTestCase(StaticLiveServerTestCase):
     def test_homepage_with_no_markers_stays_at_markers(self):
         self.browser.get(self.live_server_url)
         # After fitting bounds, wait for the following element to be rendered
-        # <div id="resting-center" style="display: none;">23.28305365119609,82.50000000000001</div>
-        raw_lat, raw_lng = self.browser\
+        self.browser\
             .select_shadow_element_by_id('homepage-map')\
-            .find_element_by_id('resting-center')\
-            .get_attribute('innerText')\
-            .split(',')
-        center_lat = float(raw_lat)
-        center_lng = float(raw_lng)
+            .find_element_by_id('finished-loading-indicator')
+        # We get an object like {'center': [23.28305365119609, 82.50000000000001]}
+        diagnostics = json.loads(self.browser.execute_script('return self.window.homepageMap.diagnostics()'))
+        center_lat, center_lng = diagnostics['center']
         self.assertAlmostEquals(center_lat, (SW_LAT + NE_LAT)/2, delta=2)
         self.assertAlmostEquals(center_lng, (SW_LNG + NE_LNG)/2, delta=2)
         self.assertIn('All Markers', self.browser.title)
+
+    def test_delete_marker_redirects_to_delete_page(self):
+        marker = models.Marker.objects.create(name='M1', location=geos.Point(9.65, 76.25))
+        self.browser.get(self.live_server_url)
+        button_component = self.browser\
+            .select_shadow_element_by_id(f'marker-button-{marker.id}')
+        button_component\
+            .find_element_by_class_name('dropdown-trigger') \
+            .click()
+        button_component.find_element_by_class_name('delete-marker').click()
+        self.assertEqual(self.browser.current_url, self.live_server_url + f'/markers/delete/{marker.id}')

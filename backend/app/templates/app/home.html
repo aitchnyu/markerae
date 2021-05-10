@@ -7,7 +7,7 @@
     {{ js_constants | js_constants_def | safe }}
   </script>
   <div id="main">
-    <webcomponents-homepage-map id="homepage-map">
+    <webcomponents-homepage-map id="homepage-map" stylesheet="{% static 'app/bulma.min.css'%}">
       <div style="height: 700px; width: 100%; background-color: #e6e5e0">Loading</div>
     </webcomponents-homepage-map>
   </div>
@@ -15,4 +15,14 @@
 {% block sidebar %}
   <button class="button is-info is-block" onclick="homepageMap.createMarker()">Create</button>
   <div id="markers"></div>
+  {% for marker in js_constants.markers %}
+    <div>
+      {{ marker.name }}
+      {#This span ensures elements don't jump when button is introduced.#}
+      <span class="button is-small is-inverted is-danger m-0 p-0"></span>
+      <webcomponents-delete-marker-button id="marker-button-{{ marker.id }}"
+                                          stylesheet="{% static 'app/bulma.min.css'%}"
+                                          marker-id="{{ marker.id }}"/>
+    </div>
+  {% endfor %}
 {% endblock %}
