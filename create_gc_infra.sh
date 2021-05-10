@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# todo automate this completely
-
 if [[ $1 == "bucket" ]]
 then
   echo reserved for future use

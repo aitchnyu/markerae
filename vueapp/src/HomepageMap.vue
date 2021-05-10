@@ -107,7 +107,7 @@
   /*From https://stackoverflow.com/a/41869915*/
   @media(max-width: 768px) {
     .almost-fullscreen {
-      height: 95vh;
+      height: 80vh;
     }
   }
   @media not all and (max-width: 768px) {

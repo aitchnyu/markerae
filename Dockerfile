@@ -40,7 +40,6 @@ RUN pip3 install -r requirements.txt && \
 # This is to allow manage.py commands
 ENV POSTGRES_DB=fake POSTGRES_USER=fake POSTGRES_PASSWORD=fake POSTGRES_HOST=fake
 COPY backend/ ./
-# todo put this before so webcomponents get compressed
 COPY --from=jsprod /code/vueapp/webpack-dist app/static/app/webpack-dist
 RUN python3 manage.py collectstatic --noinput
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app

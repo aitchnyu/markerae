@@ -1,14 +1,13 @@
 # This is appended at container build time
 # todo why need this?
 alias dmanage="/code/venv/bin/python3 /code/backend/manage.py"
-alias clean-data="rm -rf /code/venv && rm -rf /code/pgdata && rm -rf /code/vueapp/node_modules && rm -rf /code/backend/static /code/backend/app/static/app/webpack-dist" # todo static files too
+alias clean-data="rm -rf /code/venv && rm -rf /code/pgdata && rm -rf /code/vueapp/node_modules && rm -rf /code/backend/static /code/backend/app/static/app/webpack-dist"
 
 if [ ! -d /code/venv ]; then
   python3 -m venv /code/venv
   /code/venv/bin/pip3 install -r /code/backend/requirements.txt
 fi
 
-# TODO make this overridable, check only if first migrate
 dmanage migrate
 
 suggest () {
