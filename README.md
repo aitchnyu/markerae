@@ -1,5 +1,7 @@
 # Marker Project for Cloud Run
 
+![example workflow](https://github.com/aitchnyu/markerae/actions/workflows/push.yml/badge.svg)
+
 Create a Project on GCP. We get an id like `project-311206`
 
 Login to Cloud Shell.
