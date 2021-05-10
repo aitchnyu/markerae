@@ -1,10 +1,11 @@
 name: docker-compose-actions-workflow
-push:
-  branches:
-    - main
-  pull_request:
+on:
+  push:
     branches:
       - main
+    pull_request:
+      branches:
+        - main
 jobs:
   test:
     runs-on: ubuntu-20.04
