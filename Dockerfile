@@ -10,23 +10,22 @@ RUN apt-get update && \
     apt-get install -y binutils libproj-dev gdal-bin
 
 FROM base as dev
-# todo rename this script?
-ADD ./append_bashrc_dev.sh /tmp/append_bashrc_dev.sh
-RUN cat /tmp/append_bashrc_dev.sh >> ~/.bashrc
+ADD ./append_bashrc_dev.sh /tmp/tmp.sh
+RUN cat /tmp/tmp.sh >> ~/.bashrc
 EXPOSE 8000
 
 FROM ubuntu:18.04 as jsbase
-RUN mkdir /code
-# todo move this down
-WORKDIR /code/vueapp
 RUN apt-get update && \
     apt-get install -y curl && \
     curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     apt-get install -y nodejs
 
 FROM jsbase as jsdev
-ADD ./append_bashrc_jsdev.sh /tmp/append_bashrc_jsdev.sh
-RUN cat /tmp/append_bashrc_jsdev.sh >> ~/.bashrc
+RUN mkdir /code
+WORKDIR /code/vueapp
+ENV WEBPACK_DIST=../backend/app/static/app/webpack-dist
+ADD ./append_bashrc_jsdev.sh /tmp/tmp.sh
+RUN cat /tmp/tmp.sh >> ~/.bashrc
 
 FROM jsbase as jsprod
 ENV WEBPACK_DIST ./webpack-dist
@@ -37,8 +36,6 @@ FROM base as prod
 COPY backend/requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt && \
     pip3 install gunicorn==20.1.0
-# This is to allow manage.py commands
-ENV POSTGRES_DB=fake POSTGRES_USER=fake POSTGRES_PASSWORD=fake POSTGRES_HOST=fake
 COPY backend/ ./
 COPY --from=jsprod /code/vueapp/webpack-dist app/static/app/webpack-dist
 RUN python3 manage.py collectstatic --noinput

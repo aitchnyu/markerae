@@ -33,8 +33,6 @@
       build:
         context: .
         target: jsdev
-      environment:
-        - WEBPACK_DIST=../backend/app/static/app/webpack-dist
       tty: true
       volumes:
         - .:/code

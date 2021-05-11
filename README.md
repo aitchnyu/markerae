@@ -38,7 +38,8 @@ export  POSTGRES_INSTANCE=[instance name]
 
 ```
 cd markerae
-./create_gc_infra.sh db [region] [root password]
+./create_gc_infra.sh db [instance name] [region] [root password]
+./deploy_on_gc.sh manage build
 ./deploy_on_gc.sh manage showmigrations
 ./deploy_on_gc.sh manage migrate
 ./deploy_on_gc.sh manage createsuperuser

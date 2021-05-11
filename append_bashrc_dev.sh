@@ -1,6 +1,4 @@
 # This is appended at container build time
-# todo why need this?
-alias dmanage="/code/venv/bin/python3 /code/backend/manage.py"
 alias clean-data="rm -rf /code/venv && rm -rf /code/pgdata && rm -rf /code/vueapp/node_modules && rm -rf /code/backend/static /code/backend/app/static/app/webpack-dist"
 
 if [ ! -d /code/venv ]; then
@@ -8,7 +6,7 @@ if [ ! -d /code/venv ]; then
   /code/venv/bin/pip3 install -r /code/backend/requirements.txt
 fi
 
-dmanage migrate
+/code/venv/bin/python3 /code/backend/manage.py migrate
 
 suggest () {
   read -ei "$*"
@@ -20,5 +18,5 @@ COUNT=$(ps ax | grep "manage.py runserver" | wc -l)
 if [[ "$COUNT" == "1" ]];
 then
   echo "Suggested command: hit enter or ctrl+c"
-  suggest "dmanage runserver 0.0.0.0:8000"
+  suggest "/code/venv/bin/python3 /code/backend/manage.py runserver 0.0.0.0:8000"
 fi

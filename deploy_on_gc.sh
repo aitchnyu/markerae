@@ -6,13 +6,14 @@ if [[ "${GMETADATA_ADDR}" == "" ]]; then
     echo "It appears you are not running this in Cloud shell"
     exit 1
 fi
-# todo make this a loop
-if [[ -z "$POSTGRES_INSTANCE" ]]
-then
-  echo "It appears you didnt set necessary env variables"
-  exit 1
-fi
-
+for MANDATORY_ENV_VAR in PROJECT_ID REGION SERVICE_NAME POSTGRES_INSTANCE POSTGRES_DB POSTGRES_USER POSTGRES_PASSWORD
+do
+  if [[ -z $(printf '%s' "${!MANDATORY_ENV_VAR}") ]]
+  then
+    echo "You didnt set env variable ${MANDATORY_ENV_VAR}"
+    exit 1
+  fi
+done
 if [[ $1 == "build" ]]
 then
   docker pull "gcr.io/${PROJECT_ID}/my-image"
