@@ -37,6 +37,6 @@ COPY backend/requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt && \
     pip3 install gunicorn==20.1.0
 COPY backend/ ./
-COPY --from=jsprod /code/vueapp/webpack-dist app/static/app/webpack-dist
+COPY --from=jsprod webpack-dist app/static/app/webpack-dist
 RUN python3 manage.py collectstatic --noinput
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
