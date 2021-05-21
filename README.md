@@ -45,3 +45,12 @@ cd markerae
 ./deploy_on_gc.sh manage createsuperuser
 ./deploy_on_gc.sh deploy
 ```
+
+## Technologies used
+- Django
+- Vue with webcomponents target
+- Selenium for functional testing
+- Github actions for CI with integration tests
+- Docker compose for dev environment
+- Google Cloud Run, Cloud SQL, Cloud Shell for deployment
+- Cloudflare for CDN
