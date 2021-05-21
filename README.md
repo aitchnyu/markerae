@@ -47,7 +47,8 @@ cd markerae
 ```
 
 ## Technologies used
-- Django
+- Django with Postgis
+- Leaflet maps with Mapbox
 - Vue with webcomponents target
 - Selenium for functional testing
 - Github actions for CI with integration tests
